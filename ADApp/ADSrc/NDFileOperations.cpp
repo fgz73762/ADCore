@@ -7,6 +7,12 @@
 
 #include "NDFileOperations.h"
 #include "asynNDArrayDriver.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 /** Constructor.
  *  Creates the asyn parameters.
@@ -179,19 +185,17 @@ int NDFileOperations::createFileName(int maxChars, char *filePath, char *fileNam
   * \param[in] value Address of the string to write.
   * \param[in] nChars Number of characters to write.
   * \param[out] nActual Number of characters actually written. */
-asynStatus NDFileOperations::writeOctet(asynUser *pasynUser, const char *value,
-                                    size_t nChars, size_t *nActual)
+asynStatus NDFileOperations::writeOctet(asynUser *pasynUser)
 {
     int addr=0;
     int function = pasynUser->reason;
     asynStatus status = asynSuccess;
 
-    status = getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
+    status = drv->getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
 
     if (function == NDFilePath) {
         this->checkPath();
     }
      /* Do callbacks so higher layers see any changes */
-    status = (asynStatus)drv->callParamCallbacks(addr, addr);
-    return status;
+    return (asynStatus)drv->callParamCallbacks(addr, addr);
 }

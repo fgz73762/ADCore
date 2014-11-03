@@ -5,6 +5,7 @@
 #include <epicsMutex.h>
 
 #include "NDPluginDriver.h"
+#include "NDFileOperations.h"
 
 /** Mask to open file for reading */
 #define NDFileModeRead     0x01
@@ -24,7 +25,7 @@ typedef int NDFileOpenMode_t;
   * This class handles the logic of single file per image, capture into buffer or streaming multiple images
   * to a single file.  
   * Derived classes must implement the 4 pure virtual functions: openFile, readFile, writeFile and closeFile. */
-class epicsShareClass NDPluginFile : public NDPluginDriver {
+class epicsShareClass NDPluginFile : public NDPluginDriver, public NDFileOperations {
 public:
     NDPluginFile(const char *portName, int queueSize, int blockingCallbacks, 
                  const char *NDArrayPort, int NDArrayAddr, int maxAddr, int numParams,
@@ -34,6 +35,8 @@ public:
     /* These methods override those in the base class */
     virtual void processCallbacks(NDArray *pArray);
     virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+    virtual asynStatus writeOctet(asynUser *pasynUser, const char *value,
+                                        size_t nChars, size_t *nActual);
     virtual asynStatus writeNDArray(asynUser *pasynUser, void *genericPointer);
 
     /** Open a file; pure virtual function that must be implemented by derived classes.

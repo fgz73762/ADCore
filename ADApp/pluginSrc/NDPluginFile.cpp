@@ -785,6 +785,25 @@ asynStatus NDPluginFile::writeInt32(asynUser *pasynUser, epicsInt32 value)
     return status;
 }
 
+/** Call when asyn clients call pasynOctet->write().
+  * This function performs special actions on file related writes.
+  * It assumes the parameter library has already been set.
+  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+  * \param[in] value Address of the string to write.
+  * \param[in] nChars Number of characters to write.
+  * \param[out] nActual Number of characters actually written. */
+asynStatus NDPluginFile::writeOctet(asynUser *pasynUser, const char *value,
+                                    size_t nChars, size_t *nActual)
+{
+	// Base class first
+	asynStatus result = NDPluginDriver::writeOctet(pasynUser, value, nChars, nActual);
+	if(result == asynSuccess)
+	{
+		// Delegate to the mixer class
+		result = NDFileOperations::writeOctet(pasynUser);
+	}
+	return result;
+}
 
 asynStatus NDPluginFile::writeNDArray(asynUser *pasynUser, void *genericPointer)
 {
@@ -838,8 +857,9 @@ NDPluginFile::NDPluginFile(const char *portName, int queueSize, int blockingCall
     : NDPluginDriver(portName, queueSize, blockingCallbacks, 
                      NDArrayPort, NDArrayAddr, maxAddr, numParams+NUM_NDPLUGIN_FILE_PARAMS, maxBuffers, maxMemory, 
                      asynGenericPointerMask, asynGenericPointerMask,
-                     asynFlags, autoConnect, priority, stackSize),
-    pCapture(NULL), captureBufferSize(0)
+                     asynFlags, autoConnect, priority, stackSize)
+	, NDFileOperations(this)
+    , pCapture(NULL), captureBufferSize(0)
 {
     //static const char *functionName = "NDPluginFile";
 

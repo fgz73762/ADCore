@@ -29,6 +29,7 @@ INC += asynNDArrayDriver.h
 INC += ADDriver.h
 INC += tinyxml.h
 INC += tinystr.h
+INC += NDFileOperations.h
 
 LIBRARY_IOC = ADBase
 LIB_SRCS += NDAttribute.cpp
@@ -44,6 +45,7 @@ LIB_SRCS += tinyxml.cpp tinystr.cpp tinyxmlparser.cpp tinyxmlerror.cpp
 LIB_SRCS += parseAreaPrefixes.c
 LIB_SRCS += myTimeStampSource.cpp
 LIB_SRCS += myAttributeFunctions.cpp
+LIB_SRCS += NDFileOperations.cpp
 
 LIB_LIBS += asyn
 LIB_LIBS += $(EPICS_BASE_IOC_LIBS)

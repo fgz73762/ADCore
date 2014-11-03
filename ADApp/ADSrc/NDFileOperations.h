@@ -8,6 +8,7 @@
 #ifndef NDFILEOPERATIONS_H_
 #define NDFILEOPERATIONS_H_
 
+#include "asynDriver.h"
 class asynNDArrayDriver;
 
 /** Maximum length of a filename or any of its components */
@@ -57,14 +58,14 @@ typedef enum {
  *  from the override of the asynNDArrayDriver::writeOctet function.  The asyn parameters
  *  and file operations will then be available for use.
  */
-class epicsShareClass NDFileOperations {
+class NDFileOperations {
 public:
 	NDFileOperations(asynNDArrayDriver* drv);
 	~NDFileOperations();
     int checkPath();
     int createFileName(int maxChars, char *fullFileName);
     int createFileName(int maxChars, char *filePath, char *fileName);
-    asynStatus writeOctet(asynUser *pasynUser, const char *value, size_t maxChars, size_t *nActual);
+    asynStatus writeOctet(asynUser *pasynUser);
 protected:
     int NDFilePath;
 #define FILEOPS_FIRST_NDARRAY_PARAM NDFilePath
